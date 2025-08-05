@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Download, Filter, TrendingUp, TrendingDown } from 'lucide-react'
+import { X, Download, Filter } from 'lucide-react'
 import { sheetsAPI } from '@/lib/api'
 
 interface FilteredTableViewProps {
@@ -181,8 +181,8 @@ export default function FilteredTableView({
   }
 
   const sortedData = [...filteredData].sort((a, b) => {
-    const aVal = a[sortBy]
-    const bVal = b[sortBy]
+    const aVal = a[sortBy] as number
+    const bVal = b[sortBy] as number
     return sortOrder === 'asc' ? aVal - bVal : bVal - aVal
   })
 
@@ -201,9 +201,7 @@ export default function FilteredTableView({
   })
 
   const avgCtr = totalMetrics.impressions > 0 ? (totalMetrics.clicks / totalMetrics.impressions) * 100 : 0
-  const avgCpc = totalMetrics.clicks > 0 ? totalMetrics.cost / totalMetrics.clicks : 0
   const avgRoas = totalMetrics.cost > 0 ? totalMetrics.conversionValue / totalMetrics.cost : 0
-  const avgConversionRate = totalMetrics.clicks > 0 ? (totalMetrics.conversions / totalMetrics.clicks) * 100 : 0
 
   if (!isOpen) return null
 
@@ -217,7 +215,7 @@ export default function FilteredTableView({
             <div>
               <h2 className="text-2xl font-bold text-white">{title}</h2>
               <p className="text-gray-400">
-                {filteredData.length} search terms found for "{filterValue}"
+                {filteredData.length} search terms found for &quot;{filterValue}&quot;
               </p>
             </div>
           </div>

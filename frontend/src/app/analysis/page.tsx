@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { 
   BarChart3, 
@@ -13,11 +13,11 @@ import {
   Settings
 } from 'lucide-react'
 import Link from 'next/link'
-import { sheetsAPI, analysisAPI, type NGramAnalysis } from '@/lib/api'
+import { analysisAPI, type NGramAnalysis } from '@/lib/api'
 import ConfigurationModal from '@/components/ConfigurationModal'
 import FilteredTableView from '@/components/FilteredTableView'
 
-export default function AnalysisPage() {
+function AnalysisPageContent() {
   const searchParams = useSearchParams()
   const spreadsheetId = searchParams.get('id')
   
@@ -538,12 +538,12 @@ export default function AnalysisPage() {
                       <Sparkles className="w-12 h-12 text-neon-purple mx-auto mb-4" />
                       <h4 className="text-lg font-semibold text-white mb-2">AI Clustering Coming Soon</h4>
                       <p className="text-gray-300 mb-4">
-                        We're working on integrating OpenAI GPT and Google Cloud NLP to automatically categorize your search terms into meaningful themes.
+                        We&apos;re working on integrating OpenAI GPT and Google Cloud NLP to automatically categorize your search terms into meaningful themes.
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div className="bg-white/5 rounded-lg p-4">
                           <h5 className="font-medium text-white mb-2">Topic Clustering</h5>
-                          <p className="text-gray-400">Group similar terms into themes like "Transportation", "Destinations", "Services"</p>
+                          <p className="text-gray-400">Group similar terms into themes like &quot;Transportation&quot;, &quot;Destinations&quot;, &quot;Services&quot;</p>
                         </div>
                         <div className="bg-white/5 rounded-lg p-4">
                           <h5 className="font-medium text-white mb-2">Intent Analysis</h5>
@@ -779,5 +779,18 @@ export default function AnalysisPage() {
         title={filteredTableConfig.title}
       />
     </div>
+  )
+}
+
+export default function AnalysisPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-deep-black via-obsidian-violet to-deep-purple flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-purple mx-auto mb-4"></div>
+        <p className="text-white text-lg">Loading Analysis...</p>
+      </div>
+    </div>}>
+      <AnalysisPageContent />
+    </Suspense>
   )
 } 
