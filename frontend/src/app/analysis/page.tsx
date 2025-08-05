@@ -104,7 +104,7 @@ function AnalysisPageContent() {
       
       // Fetch categories data
       try {
-        const categoriesResponse = await fetch(`http://localhost:3001/api/analysis/${spreadsheetId}/categories`)
+        const categoriesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://n-gram-production.up.railway.app/api'}/analysis/${spreadsheetId}/categories`)
         const categoriesData = await categoriesResponse.json()
         if (categoriesData.success) {
           transformedResult.categories = categoriesData.data.categories
