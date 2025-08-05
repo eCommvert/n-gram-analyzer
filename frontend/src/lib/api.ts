@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://n-gram-1bsjw738v-capko-5214s-projects.vercel.app/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://n-gram-production.up.railway.app/api'
 
 // Create axios instance
 const api = axios.create({
