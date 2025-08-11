@@ -15,10 +15,41 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // CORS configuration
+// Supports comma-separated list in CORS_ORIGINS and falls back to CORS_ORIGIN
+const allowedOriginsEnv = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || 'http://localhost:3000';
+const allowedOrigins = allowedOriginsEnv.split(',').map(o => o.trim()).filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow non-browser or same-origin requests with no origin
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.some(allowed => {
+      // Exact match
+      if (origin === allowed) return true;
+      // Support wildcard subdomains like https://*.vercel.app
+      if (allowed.includes('*')) {
+        // Convert wildcard to regex, escape dots
+        const regex = new RegExp('^' + allowed
+          .replace(/\./g, '\\.')
+          .replace(/\*/g, '.*') + '$');
+        return regex.test(origin);
+      }
+      return false;
+    });
+
+    if (isAllowed) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Handle preflight quickly
+app.options('*', cors());
 
 // Rate limiting
 const limiter = rateLimit({
